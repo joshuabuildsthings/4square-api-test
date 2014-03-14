@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<!--
+	author: Joshua Giardino
+    license: Affero GPL
+    purpose: Quick Analysis of Foursquare Venue Search API for a given lat & long.
+-->
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" >
+<head>
+    <title>FourSquare API Dashboard Demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/foundation.css">
+	<link rel="stylesheet" href="css/jquery.jqplot.min.css">
+    
+    <link href="css/no-theme/jquery-ui-1.10.3.custom.min.css" rel="stylesheet">
+    
+    <script type="text/javascript" src="js/vendor/modernizr.js"></script>
+    <script type="text/javascript" src="js/vendor/jquery.js"></script>
+    
+    <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="js/foundation.min.js"></script>
+	<script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jqplot.canvasTextRenderer.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jqplot.dateAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+
+    <script type="text/javascript" src="js/plugins/jqplot.pieRenderer.min.js"></script>
+	<script type="text/javascript" src="js/plugins/jqplot.donutRenderer.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jqplot.barRenderer.min.js"></script>
+    <style media="screen" type="text/css">
+    	.jqplot-data-label{color:#000000;}
+    </style>
+</head>
+<body>
+<div>
+    <div class="row">
+        <div class="small-12 columns">
+        	<h3 class="small">Foursquare Search Results For: 37.562992, -122.325525</h3>
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr />
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 columns" align="center">
+            <p>
+            	<div id="recordCount"></div>
+            	<strong>Known Venues</strong>
+            </p>
+        </div>
+        
+        
+	</div>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr />
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 columns" align="center">
+			<p><strong>Number of Unique Venues by Search Intent</strong></p>
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 medium-6 medium-push-6 columns">
+        	<div id="barChart"></div>
+        </div>
+        <div class="small-12 medium-6 medium-pull-6 columns">
+			<p><strong>Legend:</strong></p>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#f04124"></div></div>
+                <div class="small-11 columns">Unique Venues from "Checkin" Intent Search</div>
+            </div>
+            <div class="row">
+            	<div class="small-12">
+                	<hr />
+				</div>
+			</div>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#008cba"></div></div>
+                <div class="small-11 columns">Unique Venues from "Browse" Intent Search</div>
+            </div>
+            <div class="row">
+            	<div class="small-12">
+                	<hr />
+				</div>
+			</div>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#aaaaaa"></div></div>
+                <div class="small-11 columns">Shared Venues occuring in both searches</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr />
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 columns" align="center">
+			<p><strong>Ratio of Unique Venues by Search Intent</strong></p>
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 medium-6 columns">
+        	<div id="pieChart"></div>
+        </div>
+        <div class="small-12 medium-6 columns">
+			<p><strong>Legend:</strong></p>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#f04124"></div></div>
+                <div class="small-11 columns">Unique Venues from "Checkin" Intent Search</div>
+            </div>
+            <div class="row">
+            	<hr />
+			</div>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#008cba"></div></div>
+                <div class="small-11 columns">Unique Venues from "Browse" Intent Search</div>
+            </div>
+            <div class="row">
+            	<hr />
+			</div>
+            <div class="row">
+            	<div class="small-1 columns"><div style="height:15px; width:15px; background-color:#aaaaaa"></div></div>
+                <div class="small-11 columns">Shared Venues occuring in both searches</div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="small-12 columns">
+            <hr />
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 columns" align="center">
+			<p><strong>Table of Venues Returned with Search Intent</strong></p>
+        </div>
+	</div>
+    <div class="row">
+        <div class="small-12 large-12 large-centered columns">
+        	<div id="tableData"></div>
+        </div>
+    </div>
+</div>
+
+<!-- body content here -->
+<script language="javascript" type="text/javascript">
+	// foundation ui-kit instantiation
+	$(document).foundation();
+	
+	// 4square api credentials
+	var id = '';
+	var secret = '';
+	var loc = '37.562992,-122.325525';
+	
+	// array for holding venue data
+	var venueData = new Array();
+	
+	// venue counts object
+	var venueCounts = new Object();
+
+	// to handle searches of an array of objects
+	function findObjectByProperty(arr, needle, propertyName) {
+		for(element in arr)
+		{
+			if(arr[element][propertyName] === needle)
+			{
+				// return array id of element that is first match
+				return element;
+			}
+		}
+		// else return -1
+		return -1;
+	};
+		
+	// 4square api venue search w/ checkin intent
+	function fetchCheckinIntent(id,secret,loc)
+	{
+		var base = 'https://api.foursquare.com/v2/';
+		var endpoint = 'venues/search';
+		var query = '?ll=' + loc + '&client_id=' + id + '&client_secret=' + secret + '&intent=checkin&v=20140312&limit=50';
+		
+		var url = base + endpoint + query;
+		url = 'proxy.php?q=' + encodeURIComponent(url);
+		$.ajax({
+			url: url,
+			dataType:"json",
+			success: function(data) {
+				venues = data.response.venues;
+				//window.console.log(venues);
+				venueCounts.CheckinTotal = venues.length;
+				venueCounts.CheckinUnique = venues.length;
+				
+				for(i in venues)
+				{
+					thisVenue = new Object();
+					
+					thisVenue.id = venues[i].id;
+					thisVenue.name = venues[i].name;
+					thisVenue.intents = new Array();
+					thisVenue.intents.push("checkin");
+					
+					venueData.push(thisVenue);
+				};
+				window.console.log(venueData);
+				fetchBrowseIntent(id,secret,loc);
+			},
+		});
+
+	};
+
+	// 4square api venue search w/ browse intent
+	function fetchBrowseIntent(id,secret,loc)
+	{
+		var base = 'https://api.foursquare.com/v2/';
+		var endpoint = 'venues/search';
+		var query = '?ll=' + loc + '&client_id=' + id + '&client_secret=' + secret + '&intent=browse&radius=100000&v=20140312&limit=50';
+		
+		var url = base + endpoint + query;
+		url = 'proxy.php?q=' + encodeURIComponent(url);
+		$.ajax({
+			url: url,
+			dataType:"json",
+			success: function(data) {
+				window.console.log(data);
+				var venues = data.response.venues;
+				venueCounts.BrowseTotal = venues.length;
+				venueCounts.BrowseUnique = 0;
+				for(i in venues)
+				{
+					var tmpId = findObjectByProperty(venueData,venues[i].id,"id");
+					if(tmpId > -1)
+					{
+						venueData[tmpId].intents.push("browse");
+						venueCounts.CheckinUnique = venueCounts.CheckinUnique - 1; 
+					} else {
+						
+						thisVenue = new Object();
+						
+						thisVenue.id = venues[i].id;
+						thisVenue.name = venues[i].name;
+						thisVenue.intents = new Array();
+						thisVenue.intents.push("browse");
+						
+						venueData.push(thisVenue);
+						venueCounts.BrowseUnique = venueCounts.BrowseUnique + 1;
+					};
+				};
+				//fetchMatchIntent(id,secret,loc);
+				displayStats();
+			},
+		});
+		
+	};
+	/*
+	// 4square api venue search w/ match intent
+	function fetchMatchIntent(id,secret,loc)
+	{
+		var base = 'https://api.foursquare.com/v2/';
+		var endpoint = 'venues/search';
+		var query = '?ll=' + loc + '&client_id=' + id + '&client_secret=' + secret + '&intent=match&query=a&v=20140312&limit=50';
+		
+		var url = base + endpoint + query;
+		url = 'proxy.php?q=' + encodeURIComponent(url);
+		$.ajax({
+			url: url,
+			dataType:"json",
+			success: function(data) {
+				window.console.log(data);
+				var venues = data.response.venues;
+
+				venueCounts.MatchTotal = venues.length;
+				venueCounts.MatchUnique = 0;
+
+				for(i in venues)
+				{
+					var tmpId = findObjectByProperty(venueData,venues[i].id,"id");
+					if(tmpId > -1)
+					{
+						venueData[tmpId].intents.push("match");
+						if(venueData[tmpId].intents.find("browse") > -1)
+						{
+							if(venueCounts.BrowseUnique > 0)
+							{
+								venueCounts.BrowseUnique = venueCounts.BrowseUnique -1;
+							}
+						}
+						
+						if(venueData[tmpId].intents.find("checkin") > -1)
+						{
+							if(venueCounts.CheckinUnique > 0)
+							{
+								venueCounts.CheckinUnique = venueCounts.CheckinUnique -1;
+							}
+						}
+					} else {
+						
+						thisVenue = new Object();
+						
+						thisVenue.id = venues[i].id;
+						thisVenue.name = venues[i].name;
+						thisVenue.intents = new Array();
+						thisVenue.intents.push("match");
+						
+						venueData.push(thisVenue);
+					};
+				};
+				displayStats();
+			},
+		});
+	};
+	*/
+	
+	function displayStats()
+	{		
+		var count = venueData.length;
+		$('#recordCount').append("<div style=\"font-size:48px; color:#f04124; font-weight:bold;\">" + count.toString() + "</div>");
+		generatePie(venueCounts,count);
+		generateBar(venueCounts,count);
+		generateTable(venueData);
+	};
+	
+	function generatePie(venueCounts,totalCount)
+	{
+		var data = [['Checkin Intent',venueCounts.CheckinUnique],['Browse Intent',venueCounts.BrowseUnique],['Shared Venues',totalCount-(venueCounts.CheckinUnique+venueCounts.BrowseUnique)]];
+		
+		var plot1 = jQuery.jqplot('pieChart', [data], 
+		{
+			seriesColors:['#f04124','#008cba','#aaa'],
+			seriesDefaults: {
+			// Make this a pie chart.
+			renderer: jQuery.jqplot.PieRenderer, 
+			rendererOptions: {
+				  // Put data labels on the pie slices.
+				  // By default, labels show the percentage of the slice.
+				  showDataLabels: true
+				}
+			}, 
+			legend: { 
+				show:false, location: 'e'
+			},
+			grid: {
+				drawGridLines: true,        // wether to draw lines across the grid or not.
+				gridLineColor: '#cccccc',    // *Color of the grid lines.
+				background: '#ffffff',      // CSS color spec for background color of grid.
+				borderColor: '#ffffff',     // CSS color spec for border around grid.
+				borderWidth: 0.0,           // pixel width of border around grid.
+				shadow: false, 
+			},
+			});
+			
+			$(window).resize(function() {
+				plot1.replot({ resetAxes: true });
+			});
+	}
+	
+	function generateBar(venueCounts,totalCount)
+	{
+		var data = [[venueCounts.CheckinUnique],[venueCounts.BrowseUnique],[totalCount-(venueCounts.CheckinUnique+venueCounts.BrowseUnique)]]
+
+		// Can specify a custom tick Array.
+		// Ticks should match up one for each y value (category) in the series.
+		 
+		var plot2 = $.jqplot('barChart', data, {
+			// The "seriesDefaults" option is an options object that will
+			// be applied to all series in the chart.
+			seriesDefaults:{
+				renderer:$.jqplot.BarRenderer,
+				rendererOptions: {fillToZero: true}
+			},
+			// Custom labels for the series are specified with the "label"
+			// option on the series option.  Here a series option object
+			// is specified for each series.
+			seriesColors:['#f04124','#008cba','#aaa'],
+			legend: {
+				show: false,
+			},
+			axes: {
+				// Use a category axis on the x axis and use our custom ticks.
+				xaxis: {
+					renderer: $.jqplot.CategoryAxisRenderer,
+					ticks: ["API Search"],
+				},
+				// Pad the y axis just a little so bars can get close to, but
+				// not touch, the grid boundaries.  1.2 is the default padding.
+				yaxis: {
+					pad: 1.05,
+				}
+			},
+			grid: {
+				drawGridLines: true,        // wether to draw lines across the grid or not.
+				gridLineColor: '#cccccc',    // *Color of the grid lines.
+				background: '#ffffff',      // CSS color spec for background color of grid.
+				borderColor: '#cccccc',     // CSS color spec for border around grid.
+				borderWidth: 0.0,           // pixel width of border around grid.
+				shadow: false, 
+			},
+		});
+		$(window).resize(function() {
+			plot2.replot({ resetAxes: true });
+		});
+	}
+	
+	function generateTable(venueData)
+	{
+		var output = "<table width=\"100%\">";
+		output = output + "<thead><tr>";
+		output = output + "<th>#</th>";
+		output = output + "<th>Venue Name</th>";
+		output = output + "<th>Venue Intent</th>";
+		output = output + "</tr></thead>";
+
+		for(i in venueData)
+		{
+			
+			var name = venueData[i].name;
+			
+			var id = parseInt(i)+1;
+			var intents = '';
+			
+			for(x in venueData[i].intents)
+			{
+				intents = intents + venueData[i].intents[x] + '<br />';
+			}
+			
+			output = output + "<tr><td>";
+			output = output + id.toString(); 
+			output = output + "</td><td>";
+			output = output + name + "</td><td>";
+			output = output + intents + "</td>";
+			output = output + "</td></tr>";
+		};
+
+		output = output + "</table>";
+		$('#tableData').append(output);
+	}
+	
+	fetchCheckinIntent(id,secret,loc);
+</script>
+</body>
+</html>
